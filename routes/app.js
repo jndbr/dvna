@@ -19,6 +19,13 @@ var rootLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
+// Rate limit for the calc GET route (e.g. 10 requests per minute)
+var calcLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many requests to /calc, please try again later."
+});
+
 module.exports = function () {
     router.get('/', rootLimiter, authHandler.isAuthenticated, function (req, res) {
         res.redirect('/learn')
@@ -46,7 +53,7 @@ module.exports = function () {
 
     router.get('/useredit', authHandler.isAuthenticated, appHandler.userEdit)
 
-    router.get('/calc', authHandler.isAuthenticated, function (req, res) {
+    router.get('/calc', authHandler.isAuthenticated, calcLimiter, function (req, res) {
         res.render('app/calc',{output:null})
     })
 
