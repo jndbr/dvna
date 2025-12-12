@@ -126,7 +126,7 @@ module.exports = function () {
 
     router.post('/bulkproducts', bulkProductsLimiter, authHandler.isAuthenticated, appHandler.bulkProducts);
 
-    router.post('/bulkproductslegacy', authHandler.isAuthenticated, bulkProductsLegacyLimiter, appHandler.bulkProductsLegacy);
+    router.post('/bulkproductslegacy', bulkProductsLegacyLimiter, authHandler.isAuthenticated, appHandler.bulkProductsLegacy);
 
     return router
 }
