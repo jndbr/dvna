@@ -12,6 +12,13 @@ var modifyProductLimiter = rateLimit({
   message: "Too many modify product requests, please try again later."
 });
 
+// Rate limit for ping (limit each IP to 10 requests per minute)
+var pingLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many ping requests, please try again later."
+});
+
 // Limit to 10 requests per minute for bulkproductslegacy
 var bulkProductsLegacyLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -121,7 +128,7 @@ module.exports = function () {
 
     router.post('/usersearch', authHandler.isAuthenticated, appHandler.userSearch)
 
-    router.post('/ping', authHandler.isAuthenticated, appHandler.ping)
+    router.post('/ping', pingLimiter, authHandler.isAuthenticated, appHandler.ping)
 
     router.post('/products', productsLimiter, authHandler.isAuthenticated, appHandler.productSearch)
 
