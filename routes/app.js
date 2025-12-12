@@ -19,6 +19,13 @@ var pingLimiter = rateLimit({
   message: "Too many ping requests, please try again later."
 });
 
+// Rate limit for useredit (limit each IP to 10 requests per minute)
+var userEditLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many user edit requests, please try again later."
+});
+
 // Rate limit for admin (limit each IP to 10 requests per minute)
 var adminLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -128,7 +135,7 @@ module.exports = function () {
 
     router.get('/modifyproduct', authHandler.isAuthenticated, modifyProductLimiter, appHandler.modifyProduct)
 
-    router.get('/useredit', authHandler.isAuthenticated, appHandler.userEdit)
+    router.get('/useredit', userEditLimiter, authHandler.isAuthenticated, appHandler.userEdit)
 
     router.get('/calc', calcLimiter, authHandler.isAuthenticated, function (req, res) {
         res.render('app/calc',{output:null})
