@@ -19,6 +19,13 @@ var bulkProductsLegacyLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
+// Rate limit for /admin/users - limit each IP to 15 requests per minute
+var adminUsersLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 15, // limit each IP to 15 requests per windowMs
+  message: "Too many requests to admin users page, please try again later."
+});
+
 // Rate limit for the usersearch GET route (e.g. 30 requests per minute)
 var userSearchLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -92,7 +99,7 @@ module.exports = function () {
 
     router.get('/admin/usersapi', authHandler.isAuthenticated, appHandler.listUsersAPI)
 
-    router.get('/admin/users', authHandler.isAuthenticated, function(req, res){
+    router.get('/admin/users', authHandler.isAuthenticated, adminUsersLimiter, function(req, res){
         res.render('app/adminusers')
     })
 
