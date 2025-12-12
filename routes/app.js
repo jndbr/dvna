@@ -46,6 +46,13 @@ var productsLimiter = rateLimit({
   message: "Too many requests to /products, please try again later."
 });
 
+// Rate limit for the root GET route (e.g. 30 requests per minute)
+var rootLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per windowMs
+  message: "Too many requests to /, please try again later."
+});
+
 module.exports = function () {
     router.get('/', rootLimiter, authHandler.isAuthenticated, function (req, res) {
         res.redirect('/learn')
