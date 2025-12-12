@@ -19,6 +19,13 @@ var pingLimiter = rateLimit({
   message: "Too many ping requests, please try again later."
 });
 
+// Rate limit for usersearch (limit each IP to 10 requests per minute)
+var userSearchLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many user search requests, please try again later."
+});
+
 // Rate limit for useredit (limit each IP to 10 requests per minute)
 var userEditLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -155,7 +162,7 @@ module.exports = function () {
 
     router.get('/redirect', appHandler.redirect)
 
-    router.post('/usersearch', authHandler.isAuthenticated, appHandler.userSearch)
+    router.post('/usersearch', userSearchLimiter, authHandler.isAuthenticated, appHandler.userSearch)
 
     router.post('/ping', pingLimiter, authHandler.isAuthenticated, appHandler.ping)
 
