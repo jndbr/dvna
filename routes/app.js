@@ -5,17 +5,17 @@ var authHandler = require('../core/authHandler')
 // Add express-rate-limit for bulk endpoints
 var rateLimit = require('express-rate-limit');
 
+// Rate limit for modifyproduct (limit each IP to 5 requests per minute)
+var modifyProductLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: "Too many modify product requests, please try again later."
+});
+
 // Limit to 10 requests per minute for bulkproductslegacy
 var bulkProductsLegacyLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10, // limit each IP to 10 requests per windowMs
-  message: "Too many requests, please try again later."
-});
-
-// Rate limit for the root route to prevent abuse (e.g. 100 requests per 15 minutes)
-var rootLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
   message: "Too many requests, please try again later."
 });
 
