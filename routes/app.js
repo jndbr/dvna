@@ -19,6 +19,13 @@ var bulkProductsLegacyLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
+// Limit to 10 requests per minute for bulkproducts
+var bulkProductsLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many bulk products requests, please try again later."
+});
+
 // Rate limit for the usersearch GET route (e.g. 30 requests per minute)
 var userSearchLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -70,7 +77,7 @@ module.exports = function () {
         })
     })
 
-    router.get('/bulkproducts', authHandler.isAuthenticated, function (req, res) {
+    router.get('/bulkproducts', bulkProductsLimiter, authHandler.isAuthenticated, function (req, res) {
         res.render('app/bulkproducts',{legacy:req.query.legacy})
     })
 
@@ -110,7 +117,7 @@ module.exports = function () {
 
     router.post('/calc', authHandler.isAuthenticated, appHandler.calc)
 
-    router.post('/bulkproducts',authHandler.isAuthenticated, appHandler.bulkProducts);
+    router.post('/bulkproducts', bulkProductsLimiter, authHandler.isAuthenticated, appHandler.bulkProducts);
 
     router.post('/bulkproductslegacy', authHandler.isAuthenticated, bulkProductsLegacyLimiter, appHandler.bulkProductsLegacy);
 
