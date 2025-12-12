@@ -19,6 +19,14 @@ var pingLimiter = rateLimit({
   message: "Too many ping requests, please try again later."
 });
 
+
+// Rate limit for admin users page (limit each IP to 10 requests per minute)
+var adminUsersLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many requests to admin users, please try again later."
+});
+
 // Limit to 10 requests per minute for bulkproductslegacy
 var bulkProductsLegacyLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -120,7 +128,7 @@ module.exports = function () {
 
     router.get('/admin/usersapi', authHandler.isAuthenticated, appHandler.listUsersAPI)
 
-    router.get('/admin/users', authHandler.isAuthenticated, function(req, res){
+    router.get('/admin/users', adminUsersLimiter, authHandler.isAuthenticated, function(req, res){
         res.render('app/adminusers')
     })
 
