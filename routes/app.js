@@ -12,6 +12,13 @@ var modifyProductLimiter = rateLimit({
   message: "Too many modify product requests, please try again later."
 });
 
+// Rate limit for useredit (limit each IP to 5 requests per minute)
+var userEditLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: "Too many user edit requests, please try again later."
+});
+
 // Limit to 10 requests per minute for bulkproductslegacy
 var bulkProductsLegacyLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -106,7 +113,7 @@ module.exports = function () {
 
     router.post('/modifyproduct', authHandler.isAuthenticated, modifyProductLimiter, appHandler.modifyProductSubmit)
 
-    router.post('/useredit', authHandler.isAuthenticated, appHandler.userEditSubmit)
+    router.post('/useredit', authHandler.isAuthenticated, userEditLimiter, appHandler.userEditSubmit)
 
     router.post('/calc', authHandler.isAuthenticated, appHandler.calc)
 
