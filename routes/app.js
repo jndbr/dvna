@@ -53,6 +53,13 @@ var rootLimiter = rateLimit({
   message: "Too many requests to /, please try again later."
 });
 
+// Rate limit for /ping endpoint (limit each IP to 30 requests per minute)
+var pingLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per windowMs
+  message: "Too many requests to /ping, please try again later."
+});
+
 module.exports = function () {
     router.get('/', rootLimiter, authHandler.isAuthenticated, function (req, res) {
         res.redirect('/learn')
@@ -64,7 +71,7 @@ module.exports = function () {
         })
     })
 
-    router.get('/ping', authHandler.isAuthenticated, function (req, res) {
+    router.get('/ping', pingLimiter, authHandler.isAuthenticated, function (req, res) {
         res.render('app/ping', {
             output: null
         })
