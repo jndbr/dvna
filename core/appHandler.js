@@ -186,6 +186,7 @@ module.exports.userEditSubmit = function (req, res) {
 }
 
 module.exports.redirect = function (req, res) {
+	
 	if (req.query.url) {
 		res.redirect(req.query.url)
 	} else {
