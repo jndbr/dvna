@@ -12,6 +12,13 @@ var bulkProductsLegacyLimiter = rateLimit({
   message: "Too many requests, please try again later."
 });
 
+// Rate limiter for bulkproducts endpoint (e.g. 10 requests per minute)
+var bulkProductsLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many requests, please try again later."
+});
+
 // Rate limit for the root route to prevent abuse (e.g. 100 requests per 15 minutes)
 var rootLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -103,7 +110,7 @@ module.exports = function () {
 
     router.post('/calc', authHandler.isAuthenticated, appHandler.calc)
 
-    router.post('/bulkproducts',authHandler.isAuthenticated, appHandler.bulkProducts);
+    router.post('/bulkproducts', authHandler.isAuthenticated, bulkProductsLimiter, appHandler.bulkProducts);
 
     router.post('/bulkproductslegacy', authHandler.isAuthenticated, bulkProductsLegacyLimiter, appHandler.bulkProductsLegacy);
 
