@@ -5,8 +5,13 @@ var authHandler = require('../core/authHandler')
 // Add express-rate-limit for bulk endpoints
 var rateLimit = require('express-rate-limit');
 
-// Limit to 10 requests per minute for bulkproductslegacy
+// Limit to 10 requests per minute for bulkproductslegacy and bulkproducts
 var bulkProductsLegacyLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many requests, please try again later."
+});
+var bulkProductsLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 10, // limit each IP to 10 requests per windowMs
   message: "Too many requests, please try again later."
@@ -68,7 +73,7 @@ module.exports = function () {
 
     router.post('/calc', authHandler.isAuthenticated, appHandler.calc)
 
-    router.post('/bulkproducts',authHandler.isAuthenticated, appHandler.bulkProducts);
+    router.post('/bulkproducts', authHandler.isAuthenticated, bulkProductsLimiter, appHandler.bulkProducts);
 
     router.post('/bulkproductslegacy', authHandler.isAuthenticated, bulkProductsLegacyLimiter, appHandler.bulkProductsLegacy);
 
