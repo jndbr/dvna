@@ -80,7 +80,7 @@ module.exports = function () {
 
     router.get('/useredit', authHandler.isAuthenticated, appHandler.userEdit)
 
-    router.get('/calc', authHandler.isAuthenticated, calcLimiter, function (req, res) {
+    router.get('/calc', calcLimiter, authHandler.isAuthenticated, function (req, res) {
         res.render('app/calc',{output:null})
     })
 
