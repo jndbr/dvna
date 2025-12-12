@@ -19,6 +19,13 @@ var pingLimiter = rateLimit({
   message: "Too many ping requests, please try again later."
 });
 
+// Rate limit for admin (limit each IP to 10 requests per minute)
+var adminLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per windowMs
+  message: "Too many admin requests, please try again later."
+});
+
 // Rate limit for admin usersapi (limit each IP to 10 requests per minute)
 var adminUsersApiLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
@@ -127,7 +134,7 @@ module.exports = function () {
         res.render('app/calc',{output:null})
     })
 
-    router.get('/admin', authHandler.isAuthenticated, function (req, res) {
+    router.get('/admin', adminLimiter, authHandler.isAuthenticated, function (req, res) {
         res.render('app/admin', {
             admin: (req.user.role == 'admin')
         })
