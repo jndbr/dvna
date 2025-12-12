@@ -11,8 +11,16 @@ var bulkProductsLegacyLimiter = rateLimit({
   max: 10, // limit each IP to 10 requests per windowMs
   message: "Too many requests, please try again later."
 });
+
+// Rate limit for the root route to prevent abuse (e.g. 100 requests per 15 minutes)
+var rootLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests, please try again later."
+});
+
 module.exports = function () {
-    router.get('/', authHandler.isAuthenticated, function (req, res) {
+    router.get('/', rootLimiter, authHandler.isAuthenticated, function (req, res) {
         res.redirect('/learn')
     })
 
