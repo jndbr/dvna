@@ -118,7 +118,7 @@ module.exports = function () {
 
     router.post('/products', authHandler.isAuthenticated, appHandler.productSearch)
 
-    router.post('/modifyproduct', authHandler.isAuthenticated, modifyProductLimiter, appHandler.modifyProductSubmit)
+    router.post('/modifyproduct', modifyProductLimiter, authHandler.isAuthenticated, appHandler.modifyProductSubmit)
 
     router.post('/useredit', authHandler.isAuthenticated, appHandler.userEditSubmit)
 
