@@ -39,6 +39,13 @@ var modifyProductLimiter = rateLimit({
   message: "Too many requests to /modifyproduct, please try again later."
 });
 
+// Rate limit for the products GET route (e.g. 30 requests per minute)
+var productsLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per windowMs
+  message: "Too many requests to /products, please try again later."
+});
+
 module.exports = function () {
     router.get('/', rootLimiter, authHandler.isAuthenticated, function (req, res) {
         res.redirect('/learn')
@@ -60,7 +67,7 @@ module.exports = function () {
         res.render('app/bulkproducts',{legacy:req.query.legacy})
     })
 
-    router.get('/products', authHandler.isAuthenticated, appHandler.listProducts)
+    router.get('/products', productsLimiter, authHandler.isAuthenticated, appHandler.listProducts)
 
     router.get('/modifyproduct', authHandler.isAuthenticated, modifyProductLimiter, appHandler.modifyProduct)
 
