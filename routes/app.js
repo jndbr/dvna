@@ -140,7 +140,7 @@ module.exports = function () {
 
     router.get('/products', productsLimiter, authHandler.isAuthenticated, appHandler.listProducts)
 
-    router.get('/modifyproduct', authHandler.isAuthenticated, modifyProductLimiter, appHandler.modifyProduct)
+    router.get('/modifyproduct', modifyProductLimiter, authHandler.isAuthenticated, appHandler.modifyProduct)
 
     router.get('/useredit', userEditLimiter, authHandler.isAuthenticated, appHandler.userEdit)
 
