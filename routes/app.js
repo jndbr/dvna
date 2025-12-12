@@ -122,7 +122,7 @@ module.exports = function () {
 
     router.post('/useredit', authHandler.isAuthenticated, appHandler.userEditSubmit)
 
-    router.post('/calc', authHandler.isAuthenticated, appHandler.calc)
+    router.post('/calc', calcLimiter, authHandler.isAuthenticated, appHandler.calc)
 
     router.post('/bulkproducts', bulkProductsLimiter, authHandler.isAuthenticated, appHandler.bulkProducts);
 
